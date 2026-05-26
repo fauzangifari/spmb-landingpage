@@ -60,7 +60,7 @@ function setOpacity(id, visible) {
   if (element) element.style.opacity = visible ? '1' : '0';
 }
 
-function updateStatus({ emptySlots, totalSisaT1, overflow, domFinal }) {
+function updateStatus({ emptySlots, sisaApm, sisaDpDasar, domFinal }) {
   const status = byId('s-status');
   const icon = byId('s-status-icon');
   const title = byId('s-status-title');
@@ -68,7 +68,7 @@ function updateStatus({ emptySlots, totalSisaT1, overflow, domFinal }) {
 
   if (!status || !icon || !title || !desc) return;
 
-  if (emptySlots === 0 && totalSisaT1 === 0 && overflow === 0) {
+  if (emptySlots === 0 && sisaApm === 0 && sisaDpDasar === 0) {
     status.style.background = 'var(--teal-bg)';
     status.style.borderColor = 'rgba(13, 148, 136, .25)';
     icon.style.background = 'var(--teal)';
@@ -79,25 +79,36 @@ function updateStatus({ emptySlots, totalSisaT1, overflow, domFinal }) {
     return;
   }
 
-  if (totalSisaT1 > 0 && overflow === 0) {
+  if (sisaApm > 0 && sisaDpDasar === 0) {
     status.style.background = 'var(--blue-bg)';
     status.style.borderColor = 'rgba(37, 99, 235, .25)';
     icon.style.background = 'var(--blue)';
-    icon.textContent = '↓';
+    icon.textContent = '←';
     title.style.color = 'var(--blue)';
-    title.textContent = 'Redistribusi ke Jalur Domisili';
-    desc.textContent = `${totalSisaT1} sisa kuota tidak terpenuhi dan otomatis dialihkan ke Jalur Domisili.`;
+    title.textContent = 'Redistribusi ke Domisili Prioritas';
+    desc.textContent = `${sisaApm} sisa kuota Afirmasi/Prestasi/Mutasi dialihkan ke Domisili Prioritas. Domisili tetap ${DOM_BASE} siswa.`;
     return;
   }
 
-  if (overflow > 0) {
+  if (sisaApm === 0 && sisaDpDasar > 0) {
     status.style.background = 'var(--amber-bg)';
     status.style.borderColor = 'rgba(217, 119, 6, .25)';
     icon.style.background = 'var(--amber)';
     icon.textContent = '⇒';
     title.style.color = 'var(--amber)';
     title.textContent = 'Redistribusi ke Jalur Domisili';
-    desc.textContent = `${overflow} sisa kuota Tahap I otomatis dialihkan ke Jalur Domisili. Domisili: 120 → ${domFinal} siswa.`;
+    desc.textContent = `${sisaDpDasar} sisa kuota Domisili Prioritas dialihkan ke Domisili. Domisili: ${DOM_BASE} → ${domFinal} siswa.`;
+    return;
+  }
+
+  if (sisaApm > 0 && sisaDpDasar > 0) {
+    status.style.background = 'var(--amber-bg)';
+    status.style.borderColor = 'rgba(217, 119, 6, .25)';
+    icon.style.background = 'var(--amber)';
+    icon.textContent = '⇒';
+    title.style.color = 'var(--amber)';
+    title.textContent = 'Redistribusi gabungan';
+    desc.textContent = `${sisaApm} sisa Afirmasi/Prestasi/Mutasi masuk Domisili Prioritas, dan ${sisaDpDasar} sisa Domisili Prioritas masuk Domisili.`;
     return;
   }
 
@@ -134,11 +145,11 @@ function simUpdate() {
     mu: SIM_CAP.mu - filled.mu
   };
 
-  const totalSisaT1 = leftover.dp + leftover.af + leftover.pr + leftover.mu;
-  const t1Actual = filled.dp + filled.af + filled.pr + filled.mu;
-  const overflow = totalSisaT1;
-  const domFinal = DOM_BASE + totalSisaT1;
-  const grandTotal = t1Actual + domFinal;
+  const sisaApm = leftover.af + leftover.pr + leftover.mu;
+  const sisaDpDasar = leftover.dp;
+  const dpFinal = filled.dp + sisaApm;
+  const domFinal = DOM_BASE + sisaDpDasar;
+  const grandTotal = dpFinal + filled.af + filled.pr + filled.mu + domFinal;
   const emptySlots = TOTAL - grandTotal;
 
   Object.keys(values).forEach(key => {
@@ -150,33 +161,49 @@ function simUpdate() {
 
     if (!sisaElement) return;
 
-    sisaElement.textContent = leftover[key] > 0 ? `Sisa ${leftover[key]} → Domisili` : '✓ Kuota terpenuhi';
+    if (key === 'dp') {
+      const dpExtra = Math.max(0, dpFinal - SIM_CAP.dp);
+      if (leftover.dp > 0) {
+        sisaElement.textContent = `Sisa ${leftover.dp} → Domisili`;
+        sisaElement.style.color = 'var(--coral)';
+      } else if (dpExtra > 0) {
+        sisaElement.textContent = `+${dpExtra} dari jalur lain`;
+        sisaElement.style.color = 'var(--blue)';
+      } else {
+        sisaElement.textContent = '✓ Kuota terpenuhi';
+        sisaElement.style.color = 'var(--teal)';
+      }
+      return;
+    }
+
+    sisaElement.textContent = leftover[key] > 0 ? `Sisa ${leftover[key]} → Dom. Prioritas` : '✓ Kuota terpenuhi';
     sisaElement.style.color = leftover[key] > 0 ? 'var(--coral)' : 'var(--teal)';
   });
 
-  const dpDisplayed = filled.dp;
+  const dpDisplayed = dpFinal;
   setText('sv-dp-terisi', `${dpDisplayed} terisi`);
   setText('sv-af-terisi', `${filled.af} terisi`);
   setText('sv-pr-terisi', `${filled.pr} terisi`);
   setText('sv-mu-terisi', `${filled.mu} terisi`);
 
-  setWidth('sv-fill-dp', values.dp);
+  setWidth('sv-fill-dp', (dpFinal / SIM_CAP.dp) * 100);
   setWidth('sv-fill-af', values.af);
   setWidth('sv-fill-pr', values.pr);
   setWidth('sv-fill-mu', values.mu);
 
-  ['dp', 'af', 'pr', 'mu'].forEach(key => setOpacity(`sv-arr-${key}`, leftover[key] > 0));
-  setText('sv-lbl-tambah', totalSisaT1 > 0 ? `+${totalSisaT1} kursi` : '');
-  setOpacity('sv-lbl-tambah', totalSisaT1 > 0);
-  setOpacity('sv-lbl-tambah-bg', totalSisaT1 > 0);
+  setOpacity('sv-arr-dp', sisaDpDasar > 0);
+  ['af', 'pr', 'mu'].forEach(key => setOpacity(`sv-arr-${key}`, leftover[key] > 0));
+  setText('sv-lbl-tambah', sisaApm > 0 ? `+${sisaApm} ke DP` : '');
+  setOpacity('sv-lbl-tambah', sisaApm > 0);
+  setOpacity('sv-lbl-tambah-bg', sisaApm > 0);
 
   setText('sv-dom-num', `${domFinal} siswa`);
-  setText('s-dom-extra-num', totalSisaT1);
+  setText('s-dom-extra-num', sisaDpDasar);
   setText('s-dom-total-num', domFinal);
-  setText('sv-dom-extra', totalSisaT1 > 0 ? `120 tetap + ${totalSisaT1} sisa kuota Tahap I` : '');
-  setOpacity('sv-dom-extra', overflow > 0);
+  setText('sv-dom-extra', sisaDpDasar > 0 ? `${DOM_BASE} tetap + ${sisaDpDasar} sisa Dom. Prioritas` : '');
+  setOpacity('sv-dom-extra', sisaDpDasar > 0);
   setWidth('sv-fill-dom', (domFinal / TOTAL) * 100);
-  setText('sv-lbl-overflow', totalSisaT1 > 0 ? 'dialihkan ke Domisili' : '');
+  setText('sv-lbl-overflow', sisaApm > 0 ? 'dialihkan ke Dom. Prioritas' : (sisaDpDasar > 0 ? 'sisa DP ke Domisili' : ''));
 
   setText('s-total-num', grandTotal);
   setText('sv-total-txt', `${grandTotal} / 400 siswa`);
@@ -202,7 +229,7 @@ function simUpdate() {
   const emptyLegend = byId('sv-leg-emp-wrap');
   if (emptyLegend) emptyLegend.style.display = emptySlots > 0 ? 'flex' : 'none';
 
-  updateStatus({ emptySlots, totalSisaT1, overflow, domFinal });
+  updateStatus({ emptySlots, sisaApm, sisaDpDasar, domFinal });
 }
 
 function resetSim() {

@@ -324,6 +324,10 @@
             <li><strong>2.</strong> Usia murid yang lebih tua diprioritaskan</li>
             <li><strong>3.</strong> Calon murid yang lebih dahulu mendaftar</li>
           </ul>
+          <div class="warn-box" style="margin-top:12px;margin-bottom:0">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+            <p>Jika kuota tidak terpenuhi, sisa kuota secara otomatis dialihkan ke <strong>Jalur Domisili Prioritas</strong>.</p>
+          </div>
         </div>
       </div>
 
@@ -375,6 +379,10 @@
           <div class="info-box" style="margin-top:12px;margin-bottom:0">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <p>Uji kompetensi &amp; validasi sertifikat prestasi dilaksanakan di <strong>SMAN 3, 4, 11, 13, dan 14 Samarinda</strong> pada 17–19 Juni 2026. Nilai tambah hanya diambil dari <strong>satu sertifikat</strong> dengan bobot tertinggi.</p>
+          </div>
+          <div class="warn-box" style="margin-top:12px;margin-bottom:0">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+            <p>Jika kuota tidak terpenuhi, sisa kuota secara otomatis dialihkan ke <strong>Jalur Domisili Prioritas</strong>.</p>
           </div>
         </div>
       </div>
@@ -428,14 +436,14 @@
 
     <div class="info-box">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>Geser slider untuk mengatur tingkat penyerapan setiap jalur. Jika kuota Tahap I tidak terpenuhi, sisa kuota <strong>otomatis dialihkan ke Jalur Domisili</strong> sesuai mekanisme redistribusi.</p>
+      <p>Geser slider untuk mengatur tingkat penyerapan setiap jalur. Sisa kuota Afirmasi, Prestasi, dan Mutasi <strong>otomatis dialihkan ke Domisili Prioritas</strong>; jika kuota dasar Domisili Prioritas tidak terpenuhi, sisanya dialihkan ke Jalur Domisili.</p>
     </div>
 
     <div class="sim-card">
       <div class="sim-head">
         <div>
           <span>Atur skenario</span>
-          <p>Penyerapan kuota Tahap I dan dampaknya ke Jalur Domisili</p>
+          <p>Penyerapan kuota Tahap I dan dampaknya ke Domisili Prioritas serta Jalur Domisili</p>
         </div>
         <button class="sim-reset" type="button" data-reset-sim>Reset</button>
       </div>
@@ -490,7 +498,7 @@
             <small>siswa</small>
           </div>
           <div>
-            <span>Tambahan dari Tahap I</span>
+            <span>Tambahan dari Dom. Prioritas</span>
             <strong id="s-dom-extra-num">0</strong>
             <small>siswa</small>
           </div>
@@ -554,11 +562,11 @@
           <rect id="sv-fill-mu" x="486" y="115" width="114" height="5" rx="2" fill="#DC2626"/>
 
           <path id="sv-arr-dp" d="M75 124 C82 171 116 218 160 250" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
-          <path id="sv-arr-af" d="M231 124 C233 169 246 214 260 250" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
-          <path id="sv-arr-pr" d="M387 124 C387 169 383 214 380 250" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
-          <path id="sv-arr-mu" d="M543 124 C535 171 508 218 480 250" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
-          <rect id="sv-lbl-tambah-bg" x="274" y="213" width="92" height="22" rx="11" fill="#F0FDFA" stroke="#99F6E4" opacity="0"/>
-          <text id="sv-lbl-tambah" x="320" y="228" text-anchor="middle" font-size="10" font-weight="700" fill="#0D9488" opacity="0"></text>
+          <path id="sv-arr-af" d="M231 124 C220 146 158 146 112 124" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
+          <path id="sv-arr-pr" d="M387 124 C332 164 190 164 104 124" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
+          <path id="sv-arr-mu" d="M543 124 C444 182 224 182 96 124" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#sim-arr)" opacity="0"/>
+          <rect id="sv-lbl-tambah-bg" x="31" y="150" width="88" height="22" rx="11" fill="#F0FDFA" stroke="#99F6E4" opacity="0"/>
+          <text id="sv-lbl-tambah" x="75" y="165" text-anchor="middle" font-size="10" font-weight="700" fill="#0D9488" opacity="0"></text>
           <text id="sv-lbl-overflow" x="320" y="211" text-anchor="middle" font-size="10" fill="#0D9488"></text>
 
           <text x="14" y="242" font-size="10" fill="#94A3B8" font-weight="700" letter-spacing="0.08em">TAHAP II</text>
