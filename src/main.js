@@ -147,6 +147,7 @@ function simUpdate() {
 
   const sisaApm = leftover.af + leftover.pr + leftover.mu;
   const sisaDpDasar = leftover.dp;
+  const dpEffectiveQuota = SIM_CAP.dp + sisaApm;
   const dpFinal = filled.dp + sisaApm;
   const domFinal = DOM_BASE + sisaDpDasar;
   const grandTotal = dpFinal + filled.af + filled.pr + filled.mu + domFinal;
@@ -156,19 +157,21 @@ function simUpdate() {
     const cap = SIM_CAP[key];
     const sisaElement = byId(`s-sisa-${key}`);
     setText(`s-pct-${key}`, values[key]);
-    setText(`s-num-${key}`, `${filled[key]} / ${cap} siswa`);
+    setText(`s-num-${key}`, key === 'dp' ? `${dpFinal} / ${dpEffectiveQuota} siswa` : `${filled[key]} / ${cap} siswa`);
     setWidth(`s-bar-${key}`, values[key]);
 
     if (!sisaElement) return;
 
     if (key === 'dp') {
-      const dpExtra = Math.max(0, dpFinal - SIM_CAP.dp);
-      if (leftover.dp > 0) {
+      if (sisaApm > 0 && leftover.dp > 0) {
+        sisaElement.textContent = `+${sisaApm} dari jalur lain, sisa ${leftover.dp} → Domisili`;
+        sisaElement.style.color = 'var(--amber)';
+      } else if (sisaApm > 0) {
+        sisaElement.textContent = `+${sisaApm} dari jalur lain`;
+        sisaElement.style.color = 'var(--blue)';
+      } else if (leftover.dp > 0) {
         sisaElement.textContent = `Sisa ${leftover.dp} → Domisili`;
         sisaElement.style.color = 'var(--coral)';
-      } else if (dpExtra > 0) {
-        sisaElement.textContent = `+${dpExtra} dari jalur lain`;
-        sisaElement.style.color = 'var(--blue)';
       } else {
         sisaElement.textContent = '✓ Kuota terpenuhi';
         sisaElement.style.color = 'var(--teal)';
@@ -181,12 +184,13 @@ function simUpdate() {
   });
 
   const dpDisplayed = dpFinal;
-  setText('sv-dp-terisi', `${dpDisplayed} terisi`);
+  setText('sv-dp-quota', sisaApm > 0 ? `5% + tambahan · ${dpEffectiveQuota} siswa` : `min 5% · ${SIM_CAP.dp} siswa`);
+  setText('sv-dp-terisi', `${dpDisplayed} / ${dpEffectiveQuota} terisi`);
   setText('sv-af-terisi', `${filled.af} terisi`);
   setText('sv-pr-terisi', `${filled.pr} terisi`);
   setText('sv-mu-terisi', `${filled.mu} terisi`);
 
-  setWidth('sv-fill-dp', (dpFinal / SIM_CAP.dp) * 100);
+  setWidth('sv-fill-dp', (dpFinal / dpEffectiveQuota) * 100);
   setWidth('sv-fill-af', values.af);
   setWidth('sv-fill-pr', values.pr);
   setWidth('sv-fill-mu', values.mu);

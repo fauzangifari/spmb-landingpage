@@ -1049,8 +1049,8 @@
 
           <rect x="16" y="37" width="118" height="72" rx="7" fill="#E8F0FA" stroke="#1A5FA8" stroke-width="1.2"/>
           <text x="75" y="58" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#0C447C">Dom. Prioritas</text>
-          <text x="75" y="73" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#185FA5">min 5% · 20 siswa</text>
-          <text id="sv-dp-terisi" x="75" y="92" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#0C447C">20 terisi</text>
+          <text id="sv-dp-quota" x="75" y="73" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#185FA5">min 5% · 20 siswa</text>
+          <text id="sv-dp-terisi" x="75" y="92" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#0C447C">20 / 20 terisi</text>
           <rect x="18" y="115" width="114" height="5" rx="2" fill="#DDD9D0"/>
           <rect id="sv-fill-dp" x="18" y="115" width="114" height="5" rx="2" fill="#1A5FA8" style="transition:width .25s"/>
 
@@ -1248,6 +1248,7 @@
     };
     const sisaApm = sisa.af + sisa.pr + sisa.mu;
     const sisaDpDasar = sisa.dp;
+    const dpEffectiveQuota = SIM_CAP.dp + sisaApm;
     const dpFinal = terisi.dp + sisaApm;
     const domFinal = DOM_BASE + sisaDpDasar;
     const grandTotal = dpFinal + terisi.af + terisi.pr + terisi.mu + domFinal;
@@ -1256,20 +1257,22 @@
     ['dp','af','pr','mu'].forEach(k => {
       const val = v[k], cap = SIM_CAP[k], filled = terisi[k], leftover = cap - filled;
       document.getElementById('s-pct-' + k).textContent = val;
-      document.getElementById('s-num-' + k).textContent = filled + ' / ' + cap + ' siswa';
+      document.getElementById('s-num-' + k).textContent = k === 'dp' ? dpFinal + ' / ' + dpEffectiveQuota + ' siswa' : filled + ' / ' + cap + ' siswa';
       document.getElementById('s-bar-' + k).style.width = val + '%';
       const sisaEl = document.getElementById('s-sisa-' + k);
       if (k !== 'dp') {
         sisaEl.textContent = leftover > 0 ? 'Sisa ' + leftover + ' → Dom. Prioritas' : '✓ Kuota terpenuhi';
         sisaEl.style.color = leftover > 0 ? '#9B3C1C' : '#0D6B54';
       } else {
-        const dpExtra = Math.max(0, dpFinal - SIM_CAP.dp);
-        if (leftover > 0) {
+        if (sisaApm > 0 && leftover > 0) {
+          sisaEl.textContent = '+' + sisaApm + ' dari jalur lain, sisa ' + leftover + ' → Domisili';
+          sisaEl.style.color = '#8A530A';
+        } else if (sisaApm > 0) {
+          sisaEl.textContent = '+' + sisaApm + ' dari jalur lain';
+          sisaEl.style.color = '#1A5FA8';
+        } else if (leftover > 0) {
           sisaEl.textContent = 'Sisa ' + leftover + ' → Domisili';
           sisaEl.style.color = '#9B3C1C';
-        } else if (dpExtra > 0) {
-          sisaEl.textContent = '+' + dpExtra + ' dari jalur lain';
-          sisaEl.style.color = '#1A5FA8';
         } else {
           sisaEl.textContent = '✓ Kuota terpenuhi';
           sisaEl.style.color = '#0D6B54';
@@ -1278,12 +1281,13 @@
     });
 
     const dpDisplayed = dpFinal;
-    document.getElementById('sv-dp-terisi').textContent = dpDisplayed + ' terisi';
+    document.getElementById('sv-dp-quota').textContent = sisaApm > 0 ? '5% + tambahan · ' + dpEffectiveQuota + ' siswa' : 'min 5% · 20 siswa';
+    document.getElementById('sv-dp-terisi').textContent = dpDisplayed + ' / ' + dpEffectiveQuota + ' terisi';
     document.getElementById('sv-af-terisi').textContent = terisi.af + ' terisi';
     document.getElementById('sv-pr-terisi').textContent = terisi.pr + ' terisi';
     document.getElementById('sv-mu-terisi').textContent = terisi.mu + ' terisi';
 
-    simSetW('sv-fill-dp', rnd(dpFinal / SIM_CAP.dp * 100));
+    simSetW('sv-fill-dp', rnd(dpFinal / dpEffectiveQuota * 100));
     simSetW('sv-fill-af', v.af);
     simSetW('sv-fill-pr', v.pr);
     simSetW('sv-fill-mu', v.mu);
