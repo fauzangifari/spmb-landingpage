@@ -513,6 +513,9 @@
       margin-bottom: 3px;
     }
     .sched-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .sched-desc p { margin: 0 0 6px; }
+    .sched-desc ol { margin: 6px 0 0 18px; padding: 0; }
+    .sched-desc li { margin: 2px 0; }
 
     /* ─── Footer ─── */
     .footer {
@@ -985,7 +988,7 @@
 
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;border-top:3px solid #1A5FA8">
           <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px">Dom. Prioritas</div>
-          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-dp">100</span><span style="font-size:13px;font-weight:400">%</span></div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-dp">20</span></div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px" id="s-num-dp">20 / 20 siswa</div>
           <div style="font-size:11px;font-weight:500;min-height:15px;margin-bottom:6px;color:var(--text3)" id="s-sisa-dp">—</div>
           <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px"><div id="s-bar-dp" style="height:100%;background:#1A5FA8;border-radius:3px;width:100%;transition:width .2s"></div></div>
@@ -994,7 +997,7 @@
 
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;border-top:3px solid #4E44B0">
           <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px">Afirmasi</div>
-          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-af">100</span><span style="font-size:13px;font-weight:400">%</span></div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-af">120</span></div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px" id="s-num-af">120 / 120 siswa</div>
           <div style="font-size:11px;font-weight:500;min-height:15px;margin-bottom:6px;color:var(--text3)" id="s-sisa-af">—</div>
           <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px"><div id="s-bar-af" style="height:100%;background:#4E44B0;border-radius:3px;width:100%;transition:width .2s"></div></div>
@@ -1003,7 +1006,7 @@
 
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;border-top:3px solid #C9961A">
           <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px">Prestasi</div>
-          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-pr">100</span><span style="font-size:13px;font-weight:400">%</span></div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-pr">120</span></div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px" id="s-num-pr">120 / 120 siswa</div>
           <div style="font-size:11px;font-weight:500;min-height:15px;margin-bottom:6px;color:var(--text3)" id="s-sisa-pr">—</div>
           <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px"><div id="s-bar-pr" style="height:100%;background:#C9961A;border-radius:3px;width:100%;transition:width .2s"></div></div>
@@ -1012,7 +1015,7 @@
 
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;border-top:3px solid #9B3C1C">
           <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px">Mutasi</div>
-          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-mu">100</span><span style="font-size:13px;font-weight:400">%</span></div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:2px"><span id="s-pct-mu">20</span></div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px" id="s-num-mu">20 / 20 siswa</div>
           <div style="font-size:11px;font-weight:500;min-height:15px;margin-bottom:6px;color:var(--text3)" id="s-sisa-mu">—</div>
           <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px"><div id="s-bar-mu" style="height:100%;background:#9B3C1C;border-radius:3px;width:100%;transition:width .2s"></div></div>
@@ -1130,7 +1133,17 @@
       <div class="sched-card">
         <div class="sched-step">Uji Kompetensi SMA</div>
         <div class="sched-date">17–19 Juni 2026</div>
-        <div class="sched-desc">Verifikasi sertifikat Prestasi, Tahfidz, OSIS & keagamaan (di SMAN 3, 4, 11, 13, 14)</div>
+        <div class="sched-desc">
+          <p>Verifikasi sertifikat Prestasi, Tahfidz, OSIS & keagamaan.</p>
+          <strong>Tempat Verifikasi Berkas:</strong>
+          <ol>
+            <li>SMA Negeri 3 Samarinda</li>
+            <li>SMA Negeri 4 Samarinda</li>
+            <li>SMA Negeri 11 Samarinda</li>
+            <li>SMA Negeri 13 Samarinda</li>
+            <li>SMA Negeri 14 Samarinda</li>
+          </ol>
+        </div>
       </div>
       <div class="sched-card">
         <div class="sched-step">Pendaftaran Tahap I</div>
@@ -1259,7 +1272,7 @@
 
     ['dp','af','pr','mu'].forEach(k => {
       const val = v[k], cap = k === 'dp' ? dpEffectiveQuota : SIM_CAP[k], filled = terisi[k], leftover = cap - filled;
-      document.getElementById('s-pct-' + k).textContent = val;
+      document.getElementById('s-pct-' + k).textContent = filled;
       document.getElementById('s-num-' + k).textContent = filled + ' / ' + cap + ' siswa';
       document.getElementById('s-bar-' + k).style.width = val + '%';
       const sisaEl = document.getElementById('s-sisa-' + k);

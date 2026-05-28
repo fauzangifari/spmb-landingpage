@@ -148,7 +148,7 @@ function simUpdate() {
   Object.keys(values).forEach(key => {
     const cap = key === 'dp' ? dpEffectiveQuota : SIM_CAP[key];
     const sisaElement = byId(`s-sisa-${key}`);
-    setText(`s-pct-${key}`, values[key]);
+    setText(`s-pct-${key}`, filled[key]);
     setText(`s-num-${key}`, `${filled[key]} / ${cap} siswa`);
     setWidth(`s-bar-${key}`, values[key]);
 
