@@ -969,7 +969,7 @@
 
     <div class="info-box">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>Geser slider untuk mengatur tingkat penyerapan setiap jalur. Sisa kuota Afirmasi, Prestasi, dan Mutasi <strong>otomatis dialihkan ke Domisili Prioritas</strong>; jika kuota dasar Domisili Prioritas tidak terpenuhi, sisanya dialihkan ke Jalur Domisili.</p>
+      <p>Geser slider untuk mengatur tingkat penyerapan setiap jalur. Sisa kuota Afirmasi, Prestasi, dan Mutasi <strong>otomatis dialihkan ke Domisili Prioritas</strong>; sisa dari tambahan tersebut yang tidak terserap di Domisili Prioritas masuk ke Jalur Domisili.</p>
     </div>
 
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;box-shadow:var(--shadow)">
@@ -1235,43 +1235,46 @@
       mu: +document.getElementById('sl-mu').value
     };
     const terisi = {
-      dp: rnd(SIM_CAP.dp * v.dp / 100),
+      dp: 0,
       af: rnd(SIM_CAP.af * v.af / 100),
       pr: rnd(SIM_CAP.pr * v.pr / 100),
       mu: rnd(SIM_CAP.mu * v.mu / 100)
     };
     const sisa = {
-      dp: SIM_CAP.dp - terisi.dp,
+      dp: 0,
       af: SIM_CAP.af - terisi.af,
       pr: SIM_CAP.pr - terisi.pr,
       mu: SIM_CAP.mu - terisi.mu
     };
     const sisaApm = sisa.af + sisa.pr + sisa.mu;
-    const sisaDpDasar = sisa.dp;
     const dpEffectiveQuota = SIM_CAP.dp + sisaApm;
-    const dpFinal = terisi.dp + sisaApm;
-    const domFinal = DOM_BASE + sisaDpDasar;
+    terisi.dp = rnd(dpEffectiveQuota * v.dp / 100);
+    sisa.dp = dpEffectiveQuota - terisi.dp;
+    const dpExtraUsed = Math.max(0, terisi.dp - SIM_CAP.dp);
+    const dpExtraToDomisili = Math.max(0, sisaApm - dpExtraUsed);
+    const dpFinal = terisi.dp;
+    const domFinal = DOM_BASE + dpExtraToDomisili;
     const grandTotal = dpFinal + terisi.af + terisi.pr + terisi.mu + domFinal;
     const emptySlots = TOTAL - grandTotal;
 
     ['dp','af','pr','mu'].forEach(k => {
-      const val = v[k], cap = SIM_CAP[k], filled = terisi[k], leftover = cap - filled;
+      const val = v[k], cap = k === 'dp' ? dpEffectiveQuota : SIM_CAP[k], filled = terisi[k], leftover = cap - filled;
       document.getElementById('s-pct-' + k).textContent = val;
-      document.getElementById('s-num-' + k).textContent = k === 'dp' ? dpFinal + ' / ' + dpEffectiveQuota + ' siswa' : filled + ' / ' + cap + ' siswa';
+      document.getElementById('s-num-' + k).textContent = filled + ' / ' + cap + ' siswa';
       document.getElementById('s-bar-' + k).style.width = val + '%';
       const sisaEl = document.getElementById('s-sisa-' + k);
       if (k !== 'dp') {
         sisaEl.textContent = leftover > 0 ? 'Sisa ' + leftover + ' → Dom. Prioritas' : '✓ Kuota terpenuhi';
         sisaEl.style.color = leftover > 0 ? '#9B3C1C' : '#0D6B54';
       } else {
-        if (sisaApm > 0 && leftover > 0) {
-          sisaEl.textContent = '+' + sisaApm + ' dari jalur lain, sisa ' + leftover + ' → Domisili';
+        if (sisaApm > 0 && dpExtraToDomisili > 0) {
+          sisaEl.textContent = '+' + sisaApm + ' dari jalur lain, ' + dpExtraToDomisili + ' tambahan → Domisili';
           sisaEl.style.color = '#8A530A';
         } else if (sisaApm > 0) {
           sisaEl.textContent = '+' + sisaApm + ' dari jalur lain';
           sisaEl.style.color = '#1A5FA8';
         } else if (leftover > 0) {
-          sisaEl.textContent = 'Sisa ' + leftover + ' → Domisili';
+          sisaEl.textContent = 'Sisa ' + leftover + ' belum terserap';
           sisaEl.style.color = '#9B3C1C';
         } else {
           sisaEl.textContent = '✓ Kuota terpenuhi';
@@ -1293,7 +1296,7 @@
     simSetW('sv-fill-mu', v.mu);
 
     const dpArr = document.getElementById('sv-arr-dp');
-    if (dpArr) dpArr.style.opacity = sisaDpDasar > 0 ? '1' : '0';
+    if (dpArr) dpArr.style.opacity = dpExtraToDomisili > 0 ? '1' : '0';
     ['af','pr','mu'].forEach(k => {
       const el = document.getElementById('sv-arr-' + k);
       if (el) el.style.opacity = sisa[k] > 0 ? '1' : '0';
@@ -1308,13 +1311,13 @@
     document.getElementById('sv-dom-num').textContent = domFinal + ' siswa';
     const domExtraEl = document.getElementById('sv-dom-extra');
     if (domExtraEl) {
-      domExtraEl.textContent = sisaDpDasar > 0 ? '120 tetap + ' + sisaDpDasar + ' sisa Dom. Prioritas' : '';
-      domExtraEl.style.opacity = sisaDpDasar > 0 ? '1' : '0';
+      domExtraEl.textContent = dpExtraToDomisili > 0 ? '120 dasar + ' + dpExtraToDomisili + ' tambahan dari kuota lain = ' + domFinal : '';
+      domExtraEl.style.opacity = dpExtraToDomisili > 0 ? '1' : '0';
     }
     simSetW('sv-fill-dom', rnd(domFinal / TOTAL * 100));
 
     const ovLbl = document.getElementById('sv-lbl-overflow');
-    if (ovLbl) ovLbl.textContent = sisaApm > 0 ? 'dialihkan ke Dom. Prioritas' : (sisaDpDasar > 0 ? 'sisa DP ke Domisili' : '');
+    if (ovLbl) ovLbl.textContent = sisaApm > 0 ? 'dialihkan ke Dom. Prioritas' : '';
 
     document.getElementById('s-total-num').textContent = grandTotal;
     document.getElementById('sv-total-txt').textContent = grandTotal + ' / 400 siswa';
@@ -1342,30 +1345,24 @@
     const stitle = document.getElementById('s-status-title');
     const sdesc  = document.getElementById('s-status-desc');
 
-    if (emptySlots === 0 && sisaApm === 0 && sisaDpDasar === 0) {
+    if (emptySlots === 0 && sisaApm === 0 && dpExtraToDomisili === 0) {
       sbar.style.background = 'var(--teal-bg)'; sbar.style.borderColor = '#5DCAA5';
       sicon.style.background = '#0D6B54'; sicon.textContent = '✓';
       stitle.style.color = 'var(--teal)';
       stitle.textContent = 'Semua jalur terpenuhi';
       sdesc.textContent = 'Tidak ada redistribusi kuota. Total 400 siswa terpenuhi penuh.';
-    } else if (sisaApm > 0 && sisaDpDasar === 0) {
+    } else if (sisaApm > 0 && dpExtraToDomisili === 0) {
       sbar.style.background = 'var(--blue-bg)'; sbar.style.borderColor = '#85B7EB';
       sicon.style.background = '#1A5FA8'; sicon.textContent = '←';
       stitle.style.color = 'var(--blue)';
       stitle.textContent = 'Redistribusi ke Domisili Prioritas';
       sdesc.textContent = sisaApm + ' sisa kuota Afirmasi/Prestasi/Mutasi dialihkan ke Domisili Prioritas. Domisili tetap 120 siswa.';
-    } else if (sisaApm === 0 && sisaDpDasar > 0) {
-      sbar.style.background = 'var(--amber-bg)'; sbar.style.borderColor = '#E8C85A';
-      sicon.style.background = '#8A530A'; sicon.textContent = '⇒';
-      stitle.style.color = 'var(--amber)';
-      stitle.textContent = 'Redistribusi ke Jalur Domisili';
-      sdesc.textContent = sisaDpDasar + ' sisa kuota Domisili Prioritas dialihkan ke Domisili. Domisili: 120 → ' + domFinal + ' siswa.';
-    } else if (sisaApm > 0 && sisaDpDasar > 0) {
+    } else if (sisaApm > 0 && dpExtraToDomisili > 0) {
       sbar.style.background = 'var(--amber-bg)'; sbar.style.borderColor = '#E8C85A';
       sicon.style.background = '#8A530A'; sicon.textContent = '⇒';
       stitle.style.color = 'var(--amber)';
       stitle.textContent = 'Redistribusi gabungan';
-      sdesc.textContent = sisaApm + ' sisa Afirmasi/Prestasi/Mutasi masuk Domisili Prioritas, dan ' + sisaDpDasar + ' sisa Domisili Prioritas masuk Domisili.';
+      sdesc.textContent = sisaApm + ' sisa Afirmasi/Prestasi/Mutasi menambah kuota Domisili Prioritas. ' + dpExtraToDomisili + ' sisa dari tambahan itu masuk Domisili, sehingga Domisili menjadi ' + domFinal + ' siswa.';
     } else if (emptySlots > 0) {
       sbar.style.background = 'var(--coral-bg)'; sbar.style.borderColor = '#F09595';
       sicon.style.background = '#9B3C1C'; sicon.textContent = '!';
