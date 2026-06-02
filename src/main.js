@@ -1,3 +1,6 @@
+import { initRayonMap } from './rayon-map.js';
+import samarindaGeoJsonUrl from '../samarinda-kelurahan.geojson?url';
+
 const progressBar = document.getElementById('prog');
 
 if (progressBar) {
@@ -249,3 +252,61 @@ document.querySelectorAll('#sl-dp, #sl-af, #sl-pr, #sl-mu').forEach(input => {
 document.querySelector('[data-reset-sim]')?.addEventListener('click', resetSim);
 
 simUpdate();
+
+const rayonMap = document.querySelector('[data-rayon-map]');
+
+if (rayonMap) {
+  initRayonMap(rayonMap, {
+    geoJsonUrl: samarindaGeoJsonUrl,
+    mapboxToken: import.meta.env.API_MAPBOX,
+    targetNames: [
+      'Air Hitam',
+      'Air Putih',
+      'Bukit Pinang',
+      'Gunung Kelua',
+      'Sidodadi',
+      'Jawa',
+      'Teluk Lerong Ilir',
+      'Dadi Mulya',
+      'Sempaja Utara',
+      'Sempaja Timur',
+      'Sempaja Barat',
+      'Sempaja Selatan',
+      'Bugis',
+      'Karang Anyar',
+      'Teluk Lerong Ulu'
+    ],
+    priorityNames: ['Air Hitam', 'Air Putih', 'Bukit Pinang'],
+    colorGroups: [
+      {
+        name: 'Domisili Prioritas',
+        color: '#D97706',
+        names: ['Air Hitam', 'Air Putih', 'Bukit Pinang']
+      },
+      {
+        name: 'Rayon 1 Reguler',
+        color: '#2563EB',
+        names: ['Gunung Kelua', 'Sidodadi', 'Jawa', 'Teluk Lerong Ilir', 'Dadi Mulya']
+      },
+      {
+        name: 'Rayon 1 Reguler',
+        color: '#2563EB',
+        names: ['Sempaja Utara', 'Sempaja Timur', 'Sempaja Barat', 'Sempaja Selatan']
+      },
+      {
+        name: 'Rayon 1 Reguler',
+        color: '#2563EB',
+        names: ['Bugis']
+      },
+      {
+        name: 'Rayon 1 Reguler',
+        color: '#2563EB',
+        names: ['Karang Anyar', 'Teluk Lerong Ulu']
+      }
+    ],
+    schoolName: 'SMAN 1 Samarinda',
+    schoolCoordinate: [117.13014441798188, -0.4650175190158261],
+    rayonCode: '1',
+    relatedSchools: 3
+  });
+}

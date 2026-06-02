@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles/main.css" />
   <link rel="icon" type="image/x-icon" href="./src/assets/image.png" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js"></script>
 </head>
 <body>
 
@@ -126,6 +128,36 @@
       <p class="rayon-desc">
         Calon murid yang berdomisili di wilayah kecamatan dan kelurahan berikut dapat mendaftar ke SMA Negeri 1 Samarinda melalui <strong>Jalur Domisili</strong>. Kelurahan yang ditandai ★ merupakan <strong>Domisili Prioritas</strong> khusus SMAN 1 — mendapat akses ke jalur 5% berdasarkan kelurahan terdekat.
       </p>
+
+      <div class="rayon-map" data-rayon-map>
+        <div class="rayon-map-head">
+          <div>
+            <span>Peta rayon interaktif</span>
+            <h3>Domisili Prioritas SMAN 1 Samarinda</h3>
+            <p>Area berwarna menandai kelurahan prioritas. Klik wilayah untuk melihat detail data GeoJSON.</p>
+          </div>
+          <div class="rayon-map-actions">
+            <button type="button" data-rayon-map-focus>Fokus Rayon</button>
+            <button type="button" data-rayon-map-reset>Lihat Kota</button>
+          </div>
+        </div>
+
+        <div class="rayon-map-grid" data-rayon-map-canvas>
+          <div class="rayon-map-stage">
+            <div class="rayon-map-state" data-rayon-map-state>
+              <div class="rayon-map-loader"></div>
+              <p data-rayon-map-message>Memuat data GeoJSON wilayah Samarinda...</p>
+            </div>
+            <div class="rayon-mapbox" data-rayon-mapbox role="application" aria-label="Peta wilayah rayon SMAN 1 Samarinda"></div>
+            <div class="rayon-map-legend">
+              <span class="legend-priority"><i></i>Prioritas</span>
+              <span class="legend-regular"><i></i>Rayon 1 Reguler</span>
+              <span class="legend-context"><i></i>Kelurahan lain</span>
+            </div>
+          </div>
+          <aside class="rayon-map-panel" data-rayon-map-panel aria-live="polite"></aside>
+        </div>
+      </div>
 
       <div class="kec-block">
         <div class="kec-name">Kecamatan Samarinda Ulu</div>
