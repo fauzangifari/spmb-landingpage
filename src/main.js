@@ -273,6 +273,7 @@ if (rayonMap) {
       'Sempaja Barat',
       'Sempaja Selatan',
       'Bugis',
+      'Pasar Pagi',
       'Karang Anyar',
       'Teluk Lerong Ulu'
     ],
@@ -296,7 +297,7 @@ if (rayonMap) {
       {
         name: 'Rayon 1 Reguler',
         color: '#2563EB',
-        names: ['Bugis']
+        names: ['Bugis', 'Pasar Pagi']
       },
       {
         name: 'Rayon 1 Reguler',
